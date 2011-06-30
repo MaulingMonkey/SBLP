@@ -18,8 +18,7 @@ namespace SBLP {
 			Steps.Enqueue(0);
 		}
 
-		static readonly Timer Timer = new Timer();
-
+		readonly Timer Timer = new Timer();
 		readonly Queue<int> Steps = new Queue<int>();
 
 		protected override void OnPaint( PaintEventArgs e ) {
@@ -39,6 +38,25 @@ namespace SBLP {
 			fx.DrawLines( Pens.White, Steps.Select((ms,i)=>new Point(i,h/2-ms)).ToArray() );
 
 			base.OnPaint(e);
+		}
+
+		readonly Dictionary<Keys,long> Held = new Dictionary<Keys,long>();
+		long RepeatFrequency = 500;
+
+		protected override void OnKeyPress( KeyPressEventArgs e ) {
+			base.OnKeyPress(e);
+		}
+
+		protected override void OnKeyDown( KeyEventArgs e ) {
+			if (!Held.ContainsKey(e.KeyCode)) {
+				Held.Add(e.KeyCode,Timer.MillisecondsSinceStart);
+			}
+			base.OnKeyDown(e);
+		}
+
+		protected override void OnKeyUp( KeyEventArgs e ) {
+			Held.Remove(e.KeyCode);
+			base.OnKeyUp(e);
 		}
 
 		[STAThread] static void Main() {
