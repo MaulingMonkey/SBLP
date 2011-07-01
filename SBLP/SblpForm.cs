@@ -33,21 +33,25 @@ namespace SBLP {
 
 		struct MenuEntry {
 			public Rectangle DimArea;
-			public Action    Select;
+			public Action<MainMenuScreen> Select;
 		}
 
 		class MenuEntryList : List<MenuEntry> {
-			public void Add( Rectangle dimarea, Action action ) {
+			public void Add( Rectangle dimarea, Action<MainMenuScreen> action ) {
 				Add( new MenuEntry() { DimArea=dimarea, Select=action } );
 			}
 		}
 
 		static readonly MenuEntryList Entries = new MenuEntryList
-			{ { new Rectangle(75,72,38,4), ()=>{} }
-			, { new Rectangle(72,92,41,4), ()=>Application.Exit() }
+			{ { /* Single Player */ new Rectangle(73,75,53,4), s=>{} }
+			, { /* Multiplayer   */ new Rectangle(77,83,46,4), s=>{} }
+			, { /* Settings      */ new Rectangle(83,91,33,4), s=>{} }
+			, { /* Quit          */ new Rectangle(92,99,17,4), s=>Application.Exit() }
 			};
 
 		int SelectedIndex = 0;
+		bool SelectionChanged = false;
+		long SelectionChangeTimestamp = 0;
 
 		public void Paint( SblpForm form, Graphics fx ) {
 			var zoom = Math.Min(form.ClientSize.Width/Base.Width,form.ClientSize.Height/Base.Height);
@@ -64,9 +68,14 @@ namespace SBLP {
 
 			fx.DrawImage( Base, 0, 0, Base.Width, Base.Height );
 
+			if ( SelectionChanged ) {
+				SelectionChangeTimestamp = form.Timer.MillisecondsSinceStart;
+				SelectionChanged = false;
+			}
+
 			for ( int i=0, n=Entries.Count ; i<n ; ++i ) {
-				var f = (i!=SelectedIndex) ? 1 : (Math.Cos(Math.PI*2*form.Timer.MillisecondsSinceStart/1000.0)+1)/2;
-				using ( var brush = new SolidBrush(Color.FromArgb((int)Math.Round(128*f),Color.Black)) ) {
+				var f = (i!=SelectedIndex) ? 1 : (Math.Cos(Math.PI*2*(form.Timer.MillisecondsSinceStart-SelectionChangeTimestamp)/500.0)+1)/2;
+				using ( var brush = new SolidBrush(Color.FromArgb((int)Math.Round(192*f),Color.Black)) ) {
 					fx.FillRectangle(brush,Entries[i].DimArea);
 				}
 			}
@@ -76,12 +85,14 @@ namespace SBLP {
 			switch ( key ) {
 			case Keys.Up:
 				if ( --SelectedIndex<0 ) SelectedIndex+=Entries.Count;
+				SelectionChanged = true;
 				break;
 			case Keys.Down:
 				if ( ++SelectedIndex>=Entries.Count ) SelectedIndex-=Entries.Count;
+				SelectionChanged = true;
 				break;
 			case Keys.Enter:
-				Entries[SelectedIndex].Select();
+				Entries[SelectedIndex].Select(this);
 				break;
 			case Keys.Escape:
 				Application.Exit();
@@ -121,11 +132,13 @@ namespace SBLP {
 			if ( CurrentScreen != null ) {
 				foreach ( var key in Tapped ) CurrentScreen.Impulse(key);
 				foreach ( var key in Held.Keys.Except(Tapped) ) {
-					var a = Timer.MillisecondsSinceStart-Held[key];
-					var b = Timer.MillisecondsSinceStart-Timer.dMilliseconds-Held[key];
+					var a = Timer.MillisecondsSinceStart-Timer.dMilliseconds-Held[key];
+					var b = Timer.MillisecondsSinceStart-Held[key];
 					a /= RepeatFrequency;
 					b /= RepeatFrequency;
-					for ( long i=0, n=b-a ; i<n ; ++i ) CurrentScreen.Impulse(key);
+					for ( long i=0, n=b-a ; i<n ; ++i ) {
+						CurrentScreen.Impulse(key);
+					}
 				}
 				Tapped.Clear();
 				CurrentScreen.Paint( this, fx );
@@ -141,7 +154,7 @@ namespace SBLP {
 
 		readonly HashSet<Keys> Tapped = new HashSet<Keys>();
 		readonly Dictionary<Keys,long> Held = new Dictionary<Keys,long>();
-		long RepeatFrequency = 500;
+		long RepeatFrequency = 200;
 
 		protected override void OnKeyPress( KeyPressEventArgs e ) {
 			base.OnKeyPress(e);
