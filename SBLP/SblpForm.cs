@@ -74,7 +74,7 @@ namespace SBLP {
 			}
 
 			for ( int i=0, n=Entries.Count ; i<n ; ++i ) {
-				var f = (i!=SelectedIndex) ? 1 : (Math.Cos(Math.PI*2*(form.Timer.MillisecondsSinceStart-SelectionChangeTimestamp)/500.0)+1)/2;
+				var f = (i!=SelectedIndex) ? 1 : 1-(Math.Cos(Math.PI*2*(form.Timer.MillisecondsSinceStart-SelectionChangeTimestamp)/500.0)+1)/2;
 				using ( var brush = new SolidBrush(Color.FromArgb((int)Math.Round(192*f),Color.Black)) ) {
 					fx.FillRectangle(brush,Entries[i].DimArea);
 				}
