@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FireControlScript.cs" />
     <Compile Include="IScreen.cs" />
     <Compile Include="MainMenuScreen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

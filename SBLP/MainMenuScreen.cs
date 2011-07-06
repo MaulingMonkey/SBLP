@@ -20,19 +20,21 @@ namespace SBLP {
 		}
 
 		static readonly MenuEntryList Entries = new MenuEntryList
-			{ { /* Single Player */ new Rectangle(73,75,53,4), s=>{} }
-			, { /* Multiplayer   */ new Rectangle(77,83,46,4), s=>{} }
-			, { /* Settings      */ new Rectangle(83,91,33,4), s=>{} }
-			, { /* Quit          */ new Rectangle(92,99,17,4), s=>Application.Exit() }
+			{ { /* Single Player */ new Rectangle(73,75,53,4), s=>s.StartSinglePlayer() }
+			, { /* Multiplayer   */ new Rectangle(77,83,46,4), s=>s.StartMultiplayer()  }
+			, { /* Settings      */ new Rectangle(83,91,33,4), s=>s.OpenSettings()      }
+			, { /* Quit          */ new Rectangle(92,99,17,4), s=>Application.Exit()    }
 			};
 
 		int SelectedIndex = 0;
 		bool SelectionChanged = false;
 		long SelectionChangeTimestamp = 0;
 
+		public Action StartSinglePlayer, StartMultiplayer, OpenSettings;
+
 		public void Paint( SblpForm form, Graphics fx ) {
 			var zoom = Math.Min(form.ClientSize.Width/Base.Width,form.ClientSize.Height/Base.Height);
-			if ( zoom<0 ) zoom=1;
+			if ( zoom<1 ) zoom=1;
 			var left = (form.ClientSize.Width -Base.Width *zoom)/2;
 			var top  = (form.ClientSize.Height-Base.Height*zoom)/2;
 
