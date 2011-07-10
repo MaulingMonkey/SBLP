@@ -60,6 +60,41 @@ namespace SBLP.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Bullet1L {
+            get {
+                object obj = ResourceManager.GetObject("Bullet1L", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Bullet1LLU {
+            get {
+                object obj = ResourceManager.GetObject("Bullet1LLU", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Bullet1LU {
+            get {
+                object obj = ResourceManager.GetObject("Bullet1LU", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Enemy1 {
+            get {
+                object obj = ResourceManager.GetObject("Enemy1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap FauxGUI {
+            get {
+                object obj = ResourceManager.GetObject("FauxGUI", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap MainMenuScreen {
             get {
                 object obj = ResourceManager.GetObject("MainMenuScreen", resourceCulture);
